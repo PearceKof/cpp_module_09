@@ -1,35 +1,36 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   BitcoinExchange.hpp                                :+:      :+:    :+:   */
+/*   RPN.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: blaurent <blaurent@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/13 14:44:20 by blaurent          #+#    #+#             */
-/*   Updated: 2023/08/21 15:34:13 by blaurent         ###   ########.fr       */
+/*   Created: 2023/08/21 16:01:08 by blaurent          #+#    #+#             */
+/*   Updated: 2023/08/21 17:09:44 by blaurent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BITCOINECHANGE_HPP
-# define BITCOINECHANGE_HPP
+#ifndef RPN_HPP
+# define RPN_HPP
 
-# include <iostream>
+#include <stack>
+#include <string>
+#include <iostream>
+#include <cstdlib>
 
-class BitcoinExchange
+class RPN
 {
-	private:
-		std::string date;
-		double value;
-		double exRate;
-	public:
-		BitcoinExchange();
-		~BitcoinExchange();
-
-		void setDate(std::string _date);
-		void setValue(double _value);
-		void setExchangeRate(double _exRate);
-
-		void printMultipledResult() const;
+private:
+	std::stack< int > container;
+	int result;
+public:
+	RPN();
+	RPN(const RPN& src);
+	~RPN();
+	RPN& operator=(const RPN& rhs);
+	
+	bool calculate(std::string av);
+	int getResult() const;
 };
 
 #endif
