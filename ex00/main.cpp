@@ -6,16 +6,14 @@
 /*   By: blaurent <blaurent@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 14:44:05 by blaurent          #+#    #+#             */
-/*   Updated: 2023/08/21 15:45:37 by blaurent         ###   ########.fr       */
+/*   Updated: 2023/08/30 16:28:49 by blaurent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BitcoinExchange.hpp"
 #include <map>
-#include <cerrno>
 #include <fstream>
 #include <cstdlib>
-#include <utility>
 #include <ctime>
 #include <sstream>
 
@@ -46,11 +44,6 @@ static bool isValidDate(std::string date)
 	return true ;
 }
 
-static bool isValidExchangeRate(double exRate)
-{
-	return 0 <= exRate ;
-}
-
 static bool getDataFromCsv(std::ifstream& input, std::map<std::string, double>& map_csv)
 {
 	std::string buffer;
@@ -58,10 +51,9 @@ static bool getDataFromCsv(std::ifstream& input, std::map<std::string, double>& 
 	std::getline(input, buffer);
 	if ( buffer != "date,exchange_rate" )
 	{
-		std::cerr << "ERROR: invalid format: first line must begin with \"date,exchange_rate\"" << std::endl;
+		std::cout << "ERROR: invalid format: first line must begin with \"date,exchange_rate\"" << std::endl;
 		return true ;
 	}
-	
 
 	while ( std::getline(input, buffer) )
 	{
@@ -70,18 +62,17 @@ static bool getDataFromCsv(std::ifstream& input, std::map<std::string, double>& 
 		std::istringstream iss(buffer);
 
 		getline(iss, gl_date, ',');
-		// std::cout << "readed line: " << gl_date << std::endl;
 		if ( isValidDate(gl_date) == false )
 		{
-			std::cerr << "ERROR: " << gl_date << " is an invalid date format" << std::endl;
+			std::cout << "ERROR: " << gl_date << " is an invalid date format" << std::endl;
 			return true ;
 		}
 		
 		getline(iss, gl_exchangeRate, '\0');
 		double exRate = std::strtod(gl_exchangeRate.c_str(), NULL);
-		if ( isValidExchangeRate(exRate) == false )
+		if ( exRate < 0 )
 		{
-			std::cerr << "ERROR: " << gl_exchangeRate << " is an invalid exchange rate format" << std::endl;
+			std::cout << "ERROR: " << gl_exchangeRate << " is an invalid exchange rate format" << std::endl;
 			return true ;
 		}
 		
@@ -98,7 +89,7 @@ static bool getDataFromInput(std::ifstream& input, std::map<std::string, double>
 	std::getline(input, buffer);
 	if ( buffer != "date | value" )
 	{
-		std::cerr << "ERROR: invalid format: first line must begin with \"date | value\"" << std::endl;
+		std::cout << "ERROR: invalid format: first line must begin with \"date | value\"" << std::endl;
 		return true ;
 	}
 
@@ -115,19 +106,19 @@ static bool getDataFromInput(std::ifstream& input, std::map<std::string, double>
 
 		if ( isValidDate(gl_date) == false )
 		{
-			std::cerr << "ERROR: bad input => " << gl_date << std::endl;
+			std::cout << "ERROR: bad input => " << gl_date << std::endl;
 			continue ;
 		}
 		
 		double value = std::strtod(gl_value.c_str(), NULL);
-		if ( value < 0 )
+		if ( value <= 0 )
 		{
-			std::cerr << "ERROR: not a positive number." << std::endl;
+			std::cout << "ERROR: not a positive number." << std::endl;
 			continue ;
 		}
-		if ( 1000 < value )
+		if ( 1000 <= value )
 		{
-			std::cerr << "ERROR: too large a number." << std::endl;
+			std::cout << "ERROR: too large a number." << std::endl;
 			continue ;
 		}
 		if (del != "|")
@@ -156,11 +147,18 @@ static bool getDataFromInput(std::ifstream& input, std::map<std::string, double>
 	return false ;
 }
 
+static bool closeAndQuit(std::ifstream& inputFile, std::ifstream& dataBase, bool exitStatus)
+{
+	dataBase.close();
+	inputFile.close();
+	return exitStatus ;
+}
+
 int main ( int ac, char **av )
 {
 	if ( ac <= 1 || 3 < ac)
 	{
-		std::cerr << "ERROR: could not open file." << std::endl;
+		std::cout << "ERROR: could not open file." << std::endl;
 		return EXIT_FAILURE;
 	}
 
@@ -169,19 +167,20 @@ int main ( int ac, char **av )
 	inputFile.open(av[1], std::ifstream::in);
 	if ( inputFile.is_open() == false )
 	{
-		std::cerr << "ERROR: could not open file." << std::endl;
+		std::cout << "ERROR: could not open file." << std::endl;
 		return EXIT_FAILURE;
 	}
+
 	std::ifstream dataBase;
 	
 	const char *dataBasePath = "./data.csv";
-	if (ac == 3)
+	if ( ac == 3 )
 		dataBasePath = av[2];
 
 	dataBase.open(dataBasePath, std::ifstream::in);
 	if ( dataBase.is_open() == false )
 	{
-		std::cerr << "ERROR: could not open file." << std::endl;
+		std::cout << "ERROR: could not open file." << std::endl;
 		if ( inputFile.is_open() == true )
 			inputFile.close();
 		return EXIT_FAILURE ;
@@ -190,10 +189,10 @@ int main ( int ac, char **av )
 	std::map< std::string, double >	map_csv;
 
 	if ( getDataFromCsv(dataBase, map_csv) )
-		return EXIT_FAILURE;
+		return closeAndQuit(inputFile, dataBase, EXIT_FAILURE) ;
 
 	if ( getDataFromInput(inputFile, map_csv) )
-		return EXIT_FAILURE ;
+		return closeAndQuit(inputFile, dataBase, EXIT_FAILURE) ;
 
-	return EXIT_SUCCESS ;
+	return closeAndQuit(inputFile, dataBase, EXIT_SUCCESS) ;
 }

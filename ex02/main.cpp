@@ -6,19 +6,12 @@
 /*   By: blaurent <blaurent@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 17:25:18 by blaurent          #+#    #+#             */
-/*   Updated: 2023/08/26 18:55:59 by blaurent         ###   ########.fr       */
+/*   Updated: 2023/08/29 20:22:36 by blaurent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// #include "PmergeMe.hpp"
-#include <iostream>
-#include <cstdlib>
-#include <string>
-#include <sstream>
-#include <vector>
-#include <deque>
-#include <set>
-#include <climits>
+#include "PmergeMe.hpp"
+
 static bool isValidArg( char **arg )
 {
 	for ( size_t i(1) ; arg[i] ; i++ )
@@ -38,13 +31,22 @@ static bool isValidArg( char **arg )
 	return true ;
 }
 
-static void printValue( std::vector<int>& c )
+static void printValue(std::vector<int>& c)
 {
 	for ( std::vector<int>::iterator it(c.begin()) ; it != c.end() ; it++ )
 	{
 		std::cout << " " << *it;
 	}
 	std::cout << std::endl;
+}
+
+static void printSortTime(std::clock_t t_vector, std::clock_t t_deque, int nbOfElements)
+{
+	double timevector = static_cast<double>(t_vector) / CLOCKS_PER_SEC;
+	std::cout << "Time to process a range of " << nbOfElements << " elements with std::vector : " << std::fixed << timevector  << " us" << std::endl;
+
+	double timedeque = static_cast<double>(t_deque) / CLOCKS_PER_SEC;
+	std::cout << "Time to process a range of " << nbOfElements << " elements with std::deque  : " << std::fixed << timedeque << " us" << std::endl;
 }
 
 int main(int ac, char **av)
@@ -71,16 +73,19 @@ int main(int ac, char **av)
 		c_vector.push_back(nb);
 		c_deque.push_back(nb);
 	}
-	
+
 	std::cout << "Before: ";
 	printValue(c_vector);
 	
-	std::time_t t_vector, t_deque;
+	std::clock_t t_vector, t_deque;
 
-	
-	
+	t_vector = insertMergeSort(c_vector, 0, c_vector.size() - 1);
+	t_deque = insertMergeSort(c_deque, 0, c_deque.size() - 1);
+
 	std::cout << "after: ";
 	printValue(c_vector);
+
+	printSortTime(t_vector, t_deque, ac - 1);
 
 	return EXIT_SUCCESS ;
 }

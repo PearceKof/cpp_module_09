@@ -6,7 +6,7 @@
 /*   By: blaurent <blaurent@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 16:01:42 by blaurent          #+#    #+#             */
-/*   Updated: 2023/08/21 17:17:40 by blaurent         ###   ########.fr       */
+/*   Updated: 2023/08/30 16:36:45 by blaurent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ static bool isValidArg(char *av)
 
 	if ( count_number - 1 == count_operator )
 		return true ;
+
 	std::cout << "invalid arg" << std::endl;
 	return false ;
 }
