@@ -6,12 +6,12 @@
 #    By: blaurent <blaurent@student.s19.be>         +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/07/10 15:37:05 by blaurent          #+#    #+#              #
-#    Updated: 2023/08/29 18:20:47 by blaurent         ###   ########.fr        #
+#    Updated: 2023/08/31 12:18:30 by blaurent         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME	= PmergeMe
-SRCS	= main.cpp PmergeMe.cpp
+SRCS	= main.cpp
 	
 CC         = c++
 FLAGS    = -Wall -Wextra -Werror -std=c++98
