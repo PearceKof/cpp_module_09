@@ -6,7 +6,7 @@
 /*   By: blaurent <blaurent@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 14:44:05 by blaurent          #+#    #+#             */
-/*   Updated: 2023/09/01 12:54:39 by blaurent         ###   ########.fr       */
+/*   Updated: 2023/09/01 13:05:05 by blaurent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,7 +156,7 @@ static bool closeAndQuit(std::ifstream& inputFile, std::ifstream& dataBase, bool
 
 int main ( int ac, char **av )
 {
-	if ( ac <= 1 || 3 < ac)
+	if ( ac != 2 )
 	{
 		std::cout << "ERROR: could not open file." << std::endl;
 		return EXIT_FAILURE;
@@ -172,15 +172,11 @@ int main ( int ac, char **av )
 	}
 
 	std::ifstream dataBase;
-	
-	const char *dataBasePath = "./data.csv";
-	if ( ac == 3 )
-		dataBasePath = av[2];
 
-	dataBase.open(dataBasePath, std::ifstream::in);
+	dataBase.open("./data.csv", std::ifstream::in);
 	if ( dataBase.is_open() == false )
 	{
-		std::cout << "ERROR: could not open file." << std::endl;
+		std::cout << "ERROR: could not open the data base file." << std::endl;
 		if ( inputFile.is_open() == true )
 			inputFile.close();
 		return EXIT_FAILURE ;
