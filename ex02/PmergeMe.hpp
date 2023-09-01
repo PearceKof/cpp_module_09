@@ -6,7 +6,7 @@
 /*   By: blaurent <blaurent@student.s19.be>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 17:25:26 by blaurent          #+#    #+#             */
-/*   Updated: 2023/08/29 19:42:57 by blaurent         ###   ########.fr       */
+/*   Updated: 2023/09/01 12:50:17 by blaurent         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,19 +95,20 @@ template <class container>
 std::clock_t insertMergeSort(container& c, int leftPart, int rightPart)
 {
 	std::clock_t timeAtStart = clock();
-	
-	if (rightPart - leftPart > 2)
+
+	if (rightPart - leftPart > 10)
 	{
 		int middle = leftPart + (rightPart - leftPart) / 2;
 
-		insertMergeSort(c, leftPart, middle);//recursion for the left part of the container
-		insertMergeSort(c, middle + 1, rightPart);//recursion for the right part of the container
+		insertMergeSort(c, leftPart, middle);
+		insertMergeSort(c, middle + 1, rightPart);
 		mergeSort(c, leftPart, middle, rightPart);
 	}
 	else
 	{
 		insertSort(c);
 	}
+
 	return clock() - timeAtStart ;
 }
 
